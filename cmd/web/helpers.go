@@ -1,9 +1,11 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"net/http"
 	"runtime/debug"
+	"time"
 )
 
 // serverError method write error message, stack trace to errorLog and sends 500 response to the user
@@ -21,4 +23,36 @@ func (app *application) clientError(w http.ResponseWriter, status int) {
 // notFound helper which is a convenient wrapper around clientError which sends 404
 func (app *application) notFound(w http.ResponseWriter) {
 	app.clientError(w, http.StatusNotFound)
+}
+
+func (app *application) addDefaultData(td *templateData, r *http.Request) *templateData {
+	if td == nil {
+		td = &templateData{}
+	}
+
+	td.CurrentYear = time.Now().Year()
+	return td
+}
+
+func (app *application) render(w http.ResponseWriter, r *http.Request, name string, td *templateData) {
+	// retrieve template set by page's name
+	ts, ok := app.templateCache[name]
+	if !ok {
+		app.serverError(w, fmt.Errorf("the template %s does not exist", name))
+		return
+	}
+
+	// initialize a new buffer
+	buf := new(bytes.Buffer)
+
+	// write ts to buffer
+	err := ts.Execute(buf, app.addDefaultData(td, r))
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	if _, err := buf.WriteTo(w); err != nil {
+		app.errorLog.Println(err)
+	}
 }
