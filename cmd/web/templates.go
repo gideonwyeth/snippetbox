@@ -5,12 +5,14 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/gideonwyeth/snippetbox/pkg/forms"
 	"github.com/gideonwyeth/snippetbox/pkg/models"
 )
 
 // holding structure for any dynamic data to pass to HTML templates
 type templateData struct {
 	CurrentYear int
+	Form        *forms.Form
 	Snippet     *models.Snippet
 	Snippets    []*models.Snippet
 }
@@ -24,7 +26,7 @@ var functions = template.FuncMap{
 }
 
 func newTemplateCache(dir string) (map[string]*template.Template, error) {
-	// initialiaze a new map to act as the cache
+	// initialize a new map to act as the cache
 	cache := map[string]*template.Template{}
 
 	// get a slice of all filepaths with necessary extension
