@@ -21,6 +21,9 @@
         </nav>
 
         <section>
+            {{with .Flash}}
+                <div class="flash">{{.}}</div>
+            {{end}}
             {{template "body" .}}
         </section>
 
