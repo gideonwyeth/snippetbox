@@ -4,35 +4,37 @@
 
 {{define "body"}}
     <form action="/snippet/create" method="POST">
-        <div>
-            <label for="title">Title:</label>
-            {{with .FormErrors.title}}
-                <label for="title" class="error">{{.}}</label>
-            {{end}}
-            <input type="text" id="title" name="title" value="{{.FormData.Get "title"}}">
-        </div>
-        <div>
-            <label for="content">Content:</label>
-            {{with .FormErrors.content}}
-                <label for="content" class="error">{{.}}</label>
-            {{end}}
-            <textarea id="content" name="content">{{.FormData.Get "content"}}</textarea>
-        </div>
-        <fieldset>
-            <legend>Delete in:</legend>
-            {{with .FormErrors.expires}}
-                <legend class="error">{{.}}</legend>
-            {{end}}
-            {{$exp := or (.FormData.Get "expires") "365"}}
-            <label for="oneyear">One Year</label>
-            <input type="radio" id="oneyear" name="expires" value="365" {{if (eq $exp "365")}}checked{{end}}> One Year
-            <label for="oneweek">One Week</label>
-            <input type="radio" id="oneweek" name="expires" value="7" {{if (eq $exp "7")}}checked{{end}}> One Week
-            <label for="oneday">One Day</label>
-            <input type="radio" id="oneday" name="expires" value="1" {{if (eq $exp "1")}}checked{{end}}> One Day
-        </fieldset>
-        <div>
-            <input type="submit" value="Publish snippet">
-        </div>
+        {{with .Form}}
+            <div>
+                <label for="title">Title:</label>
+                {{with .Errors.Get "title"}}
+                    <label for="title" class="error">{{.}}</label>
+                {{end}}
+                <input type="text" id="title" name="title" value="{{.Get "title"}}">
+            </div>
+            <div>
+                <label for="content">Content:</label>
+                {{with .Errors.content}}
+                    <label for="content" class="error">{{.}}</label>
+                {{end}}
+                <textarea id="content" name="content">{{.Get "content"}}</textarea>
+            </div>
+            <fieldset>
+                <legend>Delete in:</legend>
+                {{with .Errors.Get "expires"}}
+                    <legend class="error">{{.}}</legend>
+                {{end}}
+                {{$exp := or (.Get "expires") "365"}}
+                <label for="oneyear">One Year</label>
+                <input type="radio" id="oneyear" name="expires" value="365" {{if (eq $exp "365")}}checked{{end}}> One Year
+                <label for="oneweek">One Week</label>
+                <input type="radio" id="oneweek" name="expires" value="7" {{if (eq $exp "7")}}checked{{end}}> One Week
+                <label for="oneday">One Day</label>
+                <input type="radio" id="oneday" name="expires" value="1" {{if (eq $exp "1")}}checked{{end}}> One Day
+            </fieldset>
+            <div>
+                <input type="submit" value="Publish snippet">
+            </div>
+        {{end}}
     </form>
 {{end}}
