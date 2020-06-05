@@ -18,9 +18,16 @@ func (app *application) routes() http.Handler {
 
 	// handlers
 	mux.Get("/", dynamicMiddleware.ThenFunc(app.home))
+	// snippets handling
 	mux.Get("/snippet/create", dynamicMiddleware.ThenFunc(app.createSnippetForm))
 	mux.Post("/snippet/create", dynamicMiddleware.ThenFunc(app.createSnippet)) // exact match route before a wildcard
 	mux.Get("/snippet/:id", dynamicMiddleware.ThenFunc(app.showSnippet))       // here is the wildcard "id"
+	// users handling
+	mux.Get("/user/signup", dynamicMiddleware.ThenFunc(app.signupUserForm))
+	mux.Post("/user/signup", dynamicMiddleware.ThenFunc(app.signupUser))
+	mux.Get("/user/login", dynamicMiddleware.ThenFunc(app.loginUserForm))
+	mux.Post("/user/signup", dynamicMiddleware.ThenFunc(app.loginUser))
+	mux.Post("/user/signup", dynamicMiddleware.ThenFunc(app.logoutUser))
 
 	// static files server
 	mux.Get("/static/", http.StripPrefix("/static", http.FileServer(http.Dir("./ui/static/"))))
