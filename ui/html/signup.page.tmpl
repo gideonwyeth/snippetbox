@@ -20,7 +20,7 @@
                 <input type="email" id="email" name="email" value="{{.Get "email"}}">
             </div>
             <div>
-                <label for="password">Name:</label>
+                <label for="password">Password:</label>
                 {{with .Errors.Get "password"}}
                     <label class="error" for="password">{{.}}</label>
                 {{end}}
