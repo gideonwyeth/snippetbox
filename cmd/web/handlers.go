@@ -97,10 +97,22 @@ func (app *application) signupUser(w http.ResponseWriter, r *http.Request) {
 		app.render(w, r, "signup.page.tmpl", &templateData{Form: form})
 	}
 
-	_, err = fmt.Fprint(w, "Create a new user...")
-	if err != nil {
-		app.errorLog.Println(err)
+	// create a new user record in the db
+	err = app.users.Insert(form.Get("name"), form.Get("email"), form.Get("password"))
+	if err == models.ErrDuplicateErr {
+		form.Errors.Add("email", "Address is already in use")
+		app.render(w, r, "signup.page.tmpl", &templateData{Form: form})
+		return
+	} else if err != nil {
+		app.serverError(w, err)
+		return
 	}
+
+	// add a confirmation flash message
+	app.session.Put(r, "flash", "Your signup was successful. Please log in.")
+
+	// redirect the user to the login page
+	http.Redirect(w, r, "/user/login", http.StatusSeeOther)
 }
 
 func (app *application) loginUserForm(w http.ResponseWriter, r *http.Request) {
