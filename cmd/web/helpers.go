@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"runtime/debug"
 	"time"
+
+	"github.com/justinas/nosurf"
 )
 
 // serverError method write error message, stack trace to errorLog and sends 500 response to the user
@@ -30,8 +32,10 @@ func (app *application) addDefaultData(td *templateData, r *http.Request) *templ
 		td = &templateData{}
 	}
 
+	td.AuthenticatedUser = app.authenticatedUser(r)
+	td.CSRFToken = nosurf.Token(r)
 	td.CurrentYear = time.Now().Year()
-	// add the flash message to the template data, of one exists
+	// add the flash message to the template data, of one exists, and then delete it from session
 	td.Flash = app.session.PopString(r, "flash")
 	return td
 }
@@ -57,4 +61,10 @@ func (app *application) render(w http.ResponseWriter, r *http.Request, name stri
 	if _, err := buf.WriteTo(w); err != nil {
 		app.errorLog.Println(err)
 	}
+}
+
+// The authenticatedUser method returns the ID of the current user from the
+// session, or zero if the request is from an unauthenticated user.
+func (app *application) authenticatedUser(r *http.Request) int {
+	return app.session.GetInt(r, "userID")
 }
