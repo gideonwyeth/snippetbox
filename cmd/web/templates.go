@@ -11,11 +11,13 @@ import (
 
 // holding structure for any dynamic data to pass to HTML templates
 type templateData struct {
-	CurrentYear int
-	Form        *forms.Form
-	Flash       string
-	Snippet     *models.Snippet
-	Snippets    []*models.Snippet
+	AuthenticatedUser int
+	CSRFToken         string
+	CurrentYear       int
+	Form              *forms.Form
+	Flash             string
+	Snippet           *models.Snippet
+	Snippets          []*models.Snippet
 }
 
 func humanDate(t time.Time) string {
