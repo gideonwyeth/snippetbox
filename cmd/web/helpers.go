@@ -7,6 +7,7 @@ import (
 	"runtime/debug"
 	"time"
 
+	"github.com/gideonwyeth/snippetbox/pkg/models"
 	"github.com/justinas/nosurf"
 )
 
@@ -63,8 +64,11 @@ func (app *application) render(w http.ResponseWriter, r *http.Request, name stri
 	}
 }
 
-// The authenticatedUser method returns the ID of the current user from the
-// session, or zero if the request is from an unauthenticated user.
-func (app *application) authenticatedUser(r *http.Request) int {
-	return app.session.GetInt(r, "userID")
+func (app *application) authenticatedUser(r *http.Request) *models.User {
+	user, ok := r.Context().Value(contextKeyUser).(*models.User)
+	if !ok {
+		return nil
+	}
+
+	return user
 }
