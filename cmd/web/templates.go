@@ -11,7 +11,7 @@ import (
 
 // holding structure for any dynamic data to pass to HTML templates
 type templateData struct {
-	AuthenticatedUser int
+	AuthenticatedUser *models.User
 	CSRFToken         string
 	CurrentYear       int
 	Form              *forms.Form
