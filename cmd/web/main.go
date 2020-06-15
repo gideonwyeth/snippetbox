@@ -16,6 +16,10 @@ import (
 	"github.com/golangcollege/sessions"
 )
 
+type contextKey string
+
+var contextKeyUser = contextKey("user")
+
 // application struct for holding the application-wide dependencies
 type application struct {
 	errorLog      *log.Logger
