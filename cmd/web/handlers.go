@@ -82,8 +82,7 @@ func (app *application) signupUserForm(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) signupUser(w http.ResponseWriter, r *http.Request) {
-	err := r.ParseForm()
-	if err != nil {
+	if err := r.ParseForm(); err != nil {
 		app.clientError(w, http.StatusBadRequest)
 		return
 	}
@@ -98,7 +97,7 @@ func (app *application) signupUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// create a new user record in the db
-	err = app.users.Insert(form.Get("name"), form.Get("email"), form.Get("password"))
+	err := app.users.Insert(form.Get("name"), form.Get("email"), form.Get("password"))
 	if err == models.ErrDuplicateErr {
 		form.Errors.Add("email", "Address is already in use")
 		app.render(w, r, "signup.page.tmpl", &templateData{Form: form})
@@ -120,9 +119,9 @@ func (app *application) loginUserForm(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) loginUser(w http.ResponseWriter, r *http.Request) {
-	err := r.ParseForm()
-	if err != nil {
+	if err := r.ParseForm(); err != nil {
 		app.clientError(w, http.StatusBadRequest)
+		return
 	}
 
 	// Check whether the credentials are valid. If they're not, add a generic error
