@@ -152,6 +152,8 @@ func (app *application) logoutUser(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
-func ping(w http.ResponseWriter, _ *http.Request) {
-	w.Write([]byte("OK"))
+func (app *application) ping(w http.ResponseWriter, _ *http.Request) {
+	if _, err := w.Write([]byte("OK")); err != nil {
+		app.errorLog.Println(err)
+	}
 }
