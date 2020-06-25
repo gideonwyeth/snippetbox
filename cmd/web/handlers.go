@@ -94,6 +94,7 @@ func (app *application) signupUser(w http.ResponseWriter, r *http.Request) {
 
 	if !form.Valid() {
 		app.render(w, r, "signup.page.tmpl", &templateData{Form: form})
+		return
 	}
 
 	// create a new user record in the db
