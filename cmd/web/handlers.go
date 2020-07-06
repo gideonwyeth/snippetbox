@@ -89,6 +89,7 @@ func (app *application) signupUser(w http.ResponseWriter, r *http.Request) {
 
 	form := forms.New(r.PostForm)
 	form.Required("name", "email", "password")
+	form.Same("password", "repassword")
 	form.MatchesPattern("email", forms.EmailRX)
 	form.MinLength("password", 10)
 
