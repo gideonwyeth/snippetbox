@@ -32,6 +32,14 @@ func (f *Form) Required(fields ...string) {
 	}
 }
 
+func (f *Form) Same(field, target string) {
+	if f.Get(field) == f.Get(target) {
+		return
+	}
+	fieldName := strings.Title(field)
+	f.Errors.Add(field, fmt.Sprintf("%s is not the same", fieldName))
+}
+
 func (f *Form) MaxLength(field string, d int) {
 	value := f.Get(field)
 	if value == "" {
