@@ -2,6 +2,7 @@ package main
 
 import (
 	"io/ioutil"
+	"log"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -15,7 +16,9 @@ func TestSecureHeaders(t *testing.T) {
 	// Create a mock HTTP handler that we can pass to our secureHeaders
 	// middleware, which writes a 200 status code and 'OK' response body.
 	next := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("OK"))
+		if _, err := w.Write([]byte("OK")); err != nil {
+			log.Println(err)
+		}
 	})
 
 	// Pass the mock HTTP handler to our secureHeaders middleware. Because
