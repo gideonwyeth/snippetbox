@@ -77,41 +77,46 @@ func TestSignupUser(t *testing.T) {
 	csrfToken := extractCSRFToken(t, body)
 
 	tests := []struct {
-		name         string
-		userName     string
-		userEmail    string
-		userPassword string
-		csrfToken    string
-		wantCode     int
-		wantBody     []byte
+		name                 string
+		userName             string
+		userEmail            string
+		userPassword         string
+		userRepeatedPassword string
+		csrfToken            string
+		wantCode             int
+		wantBody             []byte
 	}{
-		{"Valid submission", "Bob", "bob@example.com", "validPa$$word", csrfToken, http.StatusSeeOther, nil},
+		{"Valid submission", "Bob", "bob@example.com", "validPa$$word", "validPa$$word", csrfToken,
+			http.StatusSeeOther, nil},
 
-		{"Empty name", "", "bob@example.com", "validPa$$word", csrfToken, http.StatusOK,
+		{"Empty name", "", "bob@example.com", "validPa$$word", "validPa$$word", csrfToken, http.StatusOK,
 			[]byte("This field cannot be blank")},
 
-		{"Empty email", "Bob", "", "validPa$$word", csrfToken, http.StatusOK,
+		{"Empty email", "Bob", "", "validPa$$word", "validPa$$word", csrfToken, http.StatusOK,
 			[]byte("This field cannot be blank")},
 
-		{"Empty password", "Bob", "bob@example.com", "", csrfToken, http.StatusOK,
+		{"Empty password", "Bob", "bob@example.com", "", "", csrfToken, http.StatusOK,
 			[]byte("This field cannot be blank")},
 
-		{"Invalid email (incomplete domain)", "Bob", "bob@example.", "validPa$$word", csrfToken,
+		{"Invalid email (incomplete domain)", "Bob", "bob@example.", "validPa$$word", "validPa$$word", csrfToken,
 			http.StatusOK, []byte("This field is invalid")},
 
-		{"Invalid email (missing @)", "Bob", "bobexample.com", "validPa$$word", csrfToken, http.StatusOK,
+		{"Invalid email (missing @)", "Bob", "bobexample.com", "validPa$$word", "validPa$$word", csrfToken, http.StatusOK,
 			[]byte("This field is invalid")},
 
-		{"Invalid email (missing local part)", "Bob", "@example.com", "validPa$$word", csrfToken,
+		{"Invalid email (missing local part)", "Bob", "@example.com", "validPa$$word", "validPa$$word", csrfToken,
 			http.StatusOK, []byte("This field is invalid")},
 
-		{"Duplicate email", "Bob", "dupe@example.com", "validPa$$word", csrfToken, http.StatusOK,
+		{"Duplicate email", "Bob", "dupe@example.com", "validPa$$word", "validPa$$word", csrfToken, http.StatusOK,
 			[]byte("Address is already in use")},
 
-		{"Short password", "Bob", "bob@example.com", "pa$$word", csrfToken, http.StatusOK,
+		{"Short password", "Bob", "bob@example.com", "pa$$word", "pa$$word", csrfToken, http.StatusOK,
 			[]byte("This field is too short (minimum is 10 characters)")},
 
-		{"Invalid CSRF Token", "", "", "", "wrongToken", http.StatusBadRequest, nil},
+		{"Not repeated password", "Bob", "bob@example.com", "validPa$$word", "pa$$word", csrfToken, http.StatusOK,
+			[]byte("Password is not the same")},
+
+		{"Invalid CSRF Token", "", "", "", "", "wrongToken", http.StatusBadRequest, nil},
 	}
 
 	for _, tt := range tests {
